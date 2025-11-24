@@ -46,4 +46,34 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Auth middleware to protect routes
+function authMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const authHeader = req.headers.authorization as string | undefined;
+  if (!authHeader) return res.status(401).json({ message: 'No authorization header' });
+  const parts = authHeader.split(' ');
+  const token = parts.length === 2 ? parts[1] : null;
+  if (!token) return res.status(401).json({ message: 'Invalid authorization header' });
+  try {
+    const payload = jwt.verify(token, JWT_SECRET) as any;
+    // attach user id to request for handlers
+    (req as any).userId = payload.id;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+}
+
+// Get current authenticated user
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    const userId = (req as any).userId;
+    const user = await User.findById(userId).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 export default router;

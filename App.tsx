@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { HashRouter } from 'react-router-dom';
 import Header from './components/Header';
 import AuthModal from './components/AuthModal';
+import authService from './services/authService';
 import Footer from './components/Footer';
 import EventCard from './components/EventCard';
 import EventForm from './components/EventForm';
@@ -15,6 +16,20 @@ const App: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<{ id: string; email: string; name?: string } | null>(null);
+
+  useEffect(() => {
+    const initUser = async () => {
+      try {
+        const token = authService.getToken();
+        if (!token) return;
+        const res = await authService.me();
+        if (res?.user) setCurrentUser(res.user);
+      } catch (err) {
+        authService.clearToken();
+      }
+    };
+    initUser();
+  }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   

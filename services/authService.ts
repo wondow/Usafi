@@ -1,4 +1,4 @@
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:4000';
+const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:4000';
 
 export interface AuthResponse {
   token: string;
@@ -38,3 +38,13 @@ export function clearToken() {
 }
 
 export default { signup, login, saveToken, getToken, clearToken };
+
+export async function me(): Promise<{ user: { id: string; email: string; name?: string } }> {
+  const token = getToken();
+  if (!token) throw new Error('No token');
+  const res = await fetch(`${API_BASE}/api/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) throw new Error((await res.json()).message || 'Not authenticated');
+  return res.json();
+}
