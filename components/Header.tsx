@@ -5,6 +5,7 @@ import Button from './Button';
 interface HeaderProps {
   onOpenCreate: () => void;
   onNavigateHome: () => void;
+  onOpenAuth?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ onOpenCreate, onNavigateHome }) => {
@@ -28,6 +29,7 @@ const Header: React.FC<HeaderProps> = ({ onOpenCreate, onNavigateHome }) => {
               <Plus className="w-4 h-4 mr-1" />
               Create Event
             </Button>
+            <Button variant="outline" size="sm" onClick={onOpenAuth}>Log in</Button>
             <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold border border-primary-200">
               JD
             </div>

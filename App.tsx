@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter } from 'react-router-dom';
 import Header from './components/Header';
+import AuthModal from './components/AuthModal';
 import Footer from './components/Footer';
 import EventCard from './components/EventCard';
 import EventForm from './components/EventForm';
@@ -12,6 +13,8 @@ import { Search, Filter } from 'lucide-react';
 const App: React.FC = () => {
   const [events, setEvents] = useState<IEvent[]>(MOCK_EVENTS);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ id: string; email: string; name?: string } | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   
@@ -42,11 +45,15 @@ const App: React.FC = () => {
     <HashRouter>
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Header 
-            onOpenCreate={() => setShowCreateModal(true)} 
-            onNavigateHome={() => setShowCreateModal(false)}
+          onOpenCreate={() => setShowCreateModal(true)} 
+          onNavigateHome={() => setShowCreateModal(false)}
+          onOpenAuth={() => setShowAuthModal(true)}
         />
         
         <main className="flex-1">
+          {showAuthModal && (
+            <AuthModal onClose={() => setShowAuthModal(false)} onAuthSuccess={(user) => setCurrentUser(user)} />
+          )}
           {showCreateModal ? (
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <EventForm 
