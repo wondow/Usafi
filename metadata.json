@@ -1,0 +1,7 @@
+{
+  "name": "Takasafi - Event Management",
+  "description": "A community-driven waste management and event platform tailored for a cleaner environment. Organize cleanups, join drives, and make a difference.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
